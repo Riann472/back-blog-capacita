@@ -7,7 +7,7 @@ export class UpdateUserDto extends PartialType(CreateUserDto) {
     email: string
 
     @IsString()
-    name: string
+    username: string
 
     @IsString()
     password: string
