@@ -17,9 +17,16 @@ export class PostsService {
     return user
   }
 
-  async create(createPostDto: CreatePostDto) {
-    const user = await this.findUser(createPostDto.userId) // Apenas para validação se o usuario existe ou nao
-    return await this.prisma.post.create({ data: createPostDto })
+  async create(createPostDto: CreatePostDto, userId) {
+    const user = await this.findUser(userId) // Apenas para validação se o usuario existe ou nao
+    console.log(user)
+    return await this.prisma.post.create({
+      data: {
+        title: createPostDto.title,
+        content: createPostDto.content,
+        userId
+      }
+    })
   }
 
   async findAll() {
@@ -46,17 +53,18 @@ export class PostsService {
   }
 
 
-  async update(id: number, updatePostDto: UpdatePostDto) {
-    await this.findOne(id)
-
+  async update(id: number, updatePostDto: UpdatePostDto, userId: number) {
+    const post = await this.findOne(id)
+    if (post.userId != userId) throw new HttpException('Somente o dono do post pode alterar ele.', 401)
     return await this.prisma.post.update({
       where: { id },
       data: updatePostDto
     })
   }
 
-  async remove(id: number) {
-    await this.findOne(id)
+  async remove(id: number, userId: number) {
+    const post = await this.findOne(id)
+    if (post.userId != userId) throw new HttpException('Somente o dono do post pode alterar ele.', 401)
     return await this.prisma.post.delete({
       where: { id }
     })

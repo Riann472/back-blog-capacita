@@ -6,7 +6,4 @@ export class CreatePostDto {
 
     @IsString()
     content: string;
-
-    @IsNumber()
-    userId: number;
 }
